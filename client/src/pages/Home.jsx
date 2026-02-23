@@ -1,9 +1,95 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Maximize, RotateCw, FileDigit, Eraser, Download, RefreshCw, 
-  ShieldCheck, Zap, Lock, Globe, CheckCircle, HelpCircle, ChevronRight
+  ShieldCheck, Zap, Lock, Globe, CheckCircle, HelpCircle, ChevronRight, Menu, X, ChevronDown
 } from 'lucide-react';
+
+const Navbar = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isProductDropdownOpen, setIsProductDropdownOpen] = useState(false);
+
+  return (
+    <nav className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md border-b border-gray-200 z-50">
+      <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+        <Link to="/" className="text-xl font-extrabold text-gray-900 flex items-center gap-2">
+          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white">
+            <Download size={18} />
+          </div>
+          PixEdit
+        </Link>
+
+        {/* Desktop Nav */}
+        <div className="hidden md:flex items-center gap-8">
+          <div className="relative group">
+            <button 
+              className="flex items-center gap-1 text-sm font-medium text-gray-600 hover:text-gray-900 py-2"
+              onMouseEnter={() => setIsProductDropdownOpen(true)}
+              onClick={() => setIsProductDropdownOpen(!isProductDropdownOpen)}
+            >
+              Products <ChevronDown size={14} />
+            </button>
+            
+            {/* Dropdown Menu */}
+            <div 
+              className={`absolute top-full left-0 w-56 bg-white border border-gray-100 rounded-xl shadow-xl py-2 transition-all transform origin-top-left ${isProductDropdownOpen ? 'opacity-100 scale-100 visible' : 'opacity-0 scale-95 invisible group-hover:opacity-100 group-hover:scale-100 group-hover:visible'}`}
+              onMouseLeave={() => setIsProductDropdownOpen(false)}
+            >
+              <Link to="/compress" className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 text-sm text-gray-700 hover:text-blue-600">
+                <Download size={16} className="text-green-500" /> Compress Image
+              </Link>
+              <Link to="/resize" className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 text-sm text-gray-700 hover:text-blue-600">
+                <FileDigit size={16} className="text-blue-500" /> Resize Image
+              </Link>
+              <Link to="/crop" className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 text-sm text-gray-700 hover:text-blue-600">
+                <Maximize size={16} className="text-purple-500" /> Crop Image
+              </Link>
+              <Link to="/convert" className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 text-sm text-gray-700 hover:text-blue-600">
+                <RefreshCw size={16} className="text-orange-500" /> Convert Format
+              </Link>
+              <Link to="/rotate" className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 text-sm text-gray-700 hover:text-blue-600">
+                <RotateCw size={16} className="text-pink-500" /> Rotate & Flip
+              </Link>
+              <Link to="/remove-bg" className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 text-sm text-gray-700 hover:text-blue-600">
+                <Eraser size={16} className="text-indigo-500" /> Remove Background
+              </Link>
+            </div>
+          </div>
+          <a href="#features" className="text-sm font-medium text-gray-600 hover:text-gray-900">Features</a>
+          <a href="#faq" className="text-sm font-medium text-gray-600 hover:text-gray-900">FAQ</a>
+          <a href="https://github.com/dev-techz/image-utility-app" target="_blank" className="text-sm font-medium text-gray-600 hover:text-gray-900">GitHub</a>
+        </div>
+
+        <div className="hidden md:flex items-center gap-4">
+          <Link to="/compress" className="bg-gray-900 text-white px-5 py-2 rounded-lg text-sm font-bold hover:bg-gray-800 transition-colors">
+            Get Started
+          </Link>
+        </div>
+
+        {/* Mobile Menu Button */}
+        <button className="md:hidden text-gray-600" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      </div>
+
+      {/* Mobile Nav */}
+      {isMenuOpen && (
+        <div className="md:hidden bg-white border-t border-gray-100 p-4 absolute top-16 left-0 w-full shadow-lg flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
+            <span className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Products</span>
+            <Link to="/compress" className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded-lg text-gray-700"><Download size={16} className="text-green-500"/> Compress</Link>
+            <Link to="/resize" className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded-lg text-gray-700"><FileDigit size={16} className="text-blue-500"/> Resize</Link>
+            <Link to="/crop" className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded-lg text-gray-700"><Maximize size={16} className="text-purple-500"/> Crop</Link>
+            <Link to="/remove-bg" className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded-lg text-gray-700"><Eraser size={16} className="text-indigo-500"/> Remove BG</Link>
+          </div>
+          <div className="h-px bg-gray-100"></div>
+          <a href="#features" className="text-gray-700 font-medium p-2">Features</a>
+          <a href="#faq" className="text-gray-700 font-medium p-2">FAQ</a>
+        </div>
+      )}
+    </nav>
+  );
+};
 
 const ToolCard = ({ to, icon: Icon, title, desc, color }) => (
   <Link to={to} className="group relative block p-6 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-all hover:-translate-y-1">
@@ -51,9 +137,10 @@ const FAQ = ({ question, answer }) => (
 const Home = () => {
   return (
     <div className="min-h-screen bg-gray-50 font-sans">
+      <Navbar />
       
       {/* Hero Section */}
-      <section className="bg-white border-b border-gray-200 pt-24 pb-20 px-6 text-center relative overflow-hidden">
+      <section className="bg-white border-b border-gray-200 pt-32 pb-20 px-6 text-center relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] opacity-30 pointer-events-none"></div>
         
         <div className="max-w-4xl mx-auto relative z-10">
@@ -88,7 +175,7 @@ const Home = () => {
       </section>
 
       {/* Tools Grid */}
-      <section className="py-20 px-6 max-w-7xl mx-auto">
+      <section className="py-20 px-6 max-w-7xl mx-auto" id="products">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">Everything You Need</h2>
           <p className="text-gray-500 max-w-xl mx-auto">A complete suite of image manipulation tools available at your fingertips.</p>
@@ -98,42 +185,42 @@ const Home = () => {
           <ToolCard 
             to="/compress" 
             icon={Download} 
-            color="bg-gray-900" 
+            color="bg-green-500" 
             title="Compress Image" 
             desc="Reduce file size significantly while maintaining visual quality. Perfect for SEO and web performance." 
           />
           <ToolCard 
             to="/resize" 
             icon={FileDigit} 
-            color="bg-gray-800" 
+            color="bg-blue-500" 
             title="Resize Image" 
             desc="Change dimensions by pixels or percentage. Scale images down for thumbnails or social media." 
           />
           <ToolCard 
             to="/crop" 
             icon={Maximize} 
-            color="bg-gray-700" 
+            color="bg-purple-500" 
             title="Crop Image" 
             desc="Trim unwanted areas with precision. Use presets for Instagram, Twitter, and Facebook covers." 
           />
           <ToolCard 
             to="/convert" 
             icon={RefreshCw} 
-            color="bg-gray-900" 
+            color="bg-orange-500" 
             title="Convert Format" 
             desc="Switch seamlessly between JPG, PNG, WEBP, and GIF formats. Modernize your assets." 
           />
           <ToolCard 
             to="/rotate" 
             icon={RotateCw} 
-            color="bg-gray-800" 
+            color="bg-pink-500" 
             title="Rotate & Flip" 
             desc="Fix orientation issues instantly. Rotate 90° or mirror images horizontally and vertically." 
           />
           <ToolCard 
             to="/remove-bg" 
             icon={Eraser} 
-            color="bg-gray-700" 
+            color="bg-indigo-500" 
             title="Remove Background" 
             desc="Use AI to automatically detect and remove backgrounds. Professional results in seconds." 
           />
@@ -160,7 +247,7 @@ const Home = () => {
       </section>
 
       {/* Features / Why Us */}
-      <section className="py-20 px-6 max-w-6xl mx-auto">
+      <section className="py-20 px-6 max-w-6xl mx-auto" id="features">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           <Feature 
             icon={Lock} 
@@ -181,7 +268,7 @@ const Home = () => {
       </section>
 
       {/* FAQ */}
-      <section className="bg-gray-100 py-20 px-6">
+      <section className="bg-gray-100 py-20 px-6" id="faq">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl font-bold text-gray-900 mb-10 text-center">Frequently Asked Questions</h2>
           <div className="grid gap-6">
