@@ -87,6 +87,13 @@ const BaseEditor = ({ title, icon, mode }) => {
     const [resizeDim, setResizeDim] = useState({ width: '', height: '' });
     const [maintainAspect, setMaintainAspect] = useState(true);
 
+    // Determines if this tool allows actual cropping interaction
+    const isCropTool = mode === 'crop';
+    
+    // Determines if we need rotation/flip controls (Rotate Tool or Crop Tool usually)
+    // Actually, react-easy-crop handles rotation internally for display.
+    // If not isCropTool, we want to lock the cropper interaction.
+
     useEffect(() => {
         if (file) {
             const reader = new FileReader();
@@ -110,17 +117,27 @@ const BaseEditor = ({ title, icon, mode }) => {
     const handleDownload = async () => {
         setIsProcessing(true);
         try {
-            // If mode is NOT crop, we should probably output the whole image, 
-            // but react-easy-crop always gives us crop data.
-            // If the user hasn't touched the cropper in 'resize' or 'convert' mode,
-            // we want to ensure we get the full image, not a crop.
-            // However, getCroppedImg handles rotation/flip which we WANT.
-            // The issue is if the default initial crop from react-easy-crop cuts things off.
-            // WE fix this by forcing objectFit="contain" for non-crop modes below.
+            // If NOT in crop mode, we ignore the crop area from the UI and use the full image area
+            // However, getCroppedImg expects pixel coordinates.
+            // If isCropTool is false, we should pass null or full image dims to getCroppedImg?
+            // Actually, getCroppedImg handles rotation/flip. 
+            // If we are not cropping, we want the FULL image, but with rotation/flip applied.
             
+            let finalCropPixels = croppedAreaPixels;
+            
+            if (!isCropTool && originalDimensions.width > 0) {
+                 // Force full image crop if not in crop mode
+                 finalCropPixels = {
+                     x: 0, 
+                     y: 0, 
+                     width: originalDimensions.width, 
+                     height: originalDimensions.height
+                 };
+            }
+
             const blob = await getCroppedImg(
                 imageSrc,
-                croppedAreaPixels,
+                finalCropPixels,
                 rotation,
                 flip,
                 outputFormat,
@@ -146,13 +163,6 @@ const BaseEditor = ({ title, icon, mode }) => {
         );
     }
 
-    // Determine if we should allow cropping interaction
-    const isCropMode = mode === 'crop';
-    
-    // For non-crop modes (Resize, Convert, Rotate), we want the image to fit fully visible
-    // without auto-zooming to cover the container.
-    const objectFit = isCropMode ? 'contain' : 'contain'; 
-
     return (
         <ToolLayout title={title} icon={icon} file={file} onClear={() => { setFile(null); setImageSrc(null); }}>
             <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden flex flex-col lg:flex-row h-[80vh]">
@@ -169,7 +179,8 @@ const BaseEditor = ({ title, icon, mode }) => {
                              <img src={imageSrc} className="max-w-full max-h-full object-contain shadow-2xl" />
                         </div>
                     ) : (
-                        <div className="absolute inset-0 top-0 left-0 right-0 bottom-0">
+                        <div className={`absolute inset-0 top-0 left-0 right-0 bottom-0 ${!isCropTool ? 'pointer-events-none' : ''}`}>
+                             {/* pointer-events-none above disables dragging/zooming when not in crop mode */}
                             <Cropper
                                 image={imageSrc}
                                 crop={crop}
@@ -180,11 +191,13 @@ const BaseEditor = ({ title, icon, mode }) => {
                                 onCropComplete={onCropComplete}
                                 onZoomChange={setZoom}
                                 onRotationChange={setRotation}
+                                showGrid={isCropTool} // Hide grid if not cropping
                                 restrictPosition={false}
-                                objectFit="contain" 
+                                objectFit={isCropTool ? 'contain' : 'contain'} 
                                 style={{ 
                                     containerStyle: { background: 'transparent' },
-                                    mediaStyle: { width: 'auto', height: 'auto', maxHeight: '90%', maxWidth: '90%' } 
+                                    mediaStyle: { width: 'auto', height: 'auto', maxHeight: '90%', maxWidth: '90%' },
+                                    cropAreaStyle: !isCropTool ? { display: 'none' } : {} // Hide crop box completely
                                 }}
                                 transform={[
                                     `translate(${crop.x}px, ${crop.y}px)`,
@@ -197,8 +210,8 @@ const BaseEditor = ({ title, icon, mode }) => {
                         </div>
                     )}
 
-                    {/* Zoom Controls (only if using Cropper) */}
-                    {mode !== 'remove-bg' && (
+                    {/* Zoom Controls (only if using Cropper AND in Crop Mode) */}
+                    {isCropTool && (
                         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-gray-800/90 backdrop-blur-sm px-4 py-2 rounded-full flex gap-4 text-white shadow-xl z-20 border border-white/10">
                             <button onClick={() => setZoom(Math.max(1, zoom - 0.2))} className="hover:text-blue-400 font-bold w-6">-</button>
                             <span className="text-xs self-center font-mono w-12 text-center text-gray-300">{(zoom * 100).toFixed(0)}%</span>
