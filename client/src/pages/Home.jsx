@@ -45,42 +45,42 @@ const Home = () => {
           <ToolCard 
             to="/compress" 
             icon={Download} 
-            color="bg-green-500" 
+            color="bg-gray-900" 
             title="Compress Image" 
             desc="Reduce file size while maintaining quality. Perfect for web optimization." 
           />
           <ToolCard 
             to="/resize" 
             icon={FileDigit} 
-            color="bg-blue-500" 
+            color="bg-gray-800" 
             title="Resize Image" 
             desc="Change dimensions by pixels or percentage without losing aspect ratio." 
           />
           <ToolCard 
             to="/crop" 
             icon={Maximize} 
-            color="bg-purple-500" 
+            color="bg-gray-700" 
             title="Crop Image" 
             desc="Trim unwanted areas. Presets for social media (1:1, 16:9, etc)." 
           />
           <ToolCard 
             to="/convert" 
             icon={RefreshCw} 
-            color="bg-orange-500" 
+            color="bg-gray-900" 
             title="Convert to JPG/PNG/WEBP" 
             desc="Switch between formats instantly. Convert WebP to JPG or PNG to WebP." 
           />
           <ToolCard 
             to="/rotate" 
             icon={RotateCw} 
-            color="bg-pink-500" 
+            color="bg-gray-800" 
             title="Rotate & Flip" 
             desc="Fix orientation issues. Rotate 90 degrees or flip horizontally/vertically." 
           />
           <ToolCard 
             to="/remove-bg" 
             icon={Eraser} 
-            color="bg-indigo-500" 
+            color="bg-gray-700" 
             title="Remove Background" 
             desc="Automatically remove backgrounds using AI. Runs 100% in browser." 
           />
