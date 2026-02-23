@@ -110,6 +110,14 @@ const BaseEditor = ({ title, icon, mode }) => {
     const handleDownload = async () => {
         setIsProcessing(true);
         try {
+            // If mode is NOT crop, we should probably output the whole image, 
+            // but react-easy-crop always gives us crop data.
+            // If the user hasn't touched the cropper in 'resize' or 'convert' mode,
+            // we want to ensure we get the full image, not a crop.
+            // However, getCroppedImg handles rotation/flip which we WANT.
+            // The issue is if the default initial crop from react-easy-crop cuts things off.
+            // WE fix this by forcing objectFit="contain" for non-crop modes below.
+            
             const blob = await getCroppedImg(
                 imageSrc,
                 croppedAreaPixels,
@@ -138,6 +146,13 @@ const BaseEditor = ({ title, icon, mode }) => {
         );
     }
 
+    // Determine if we should allow cropping interaction
+    const isCropMode = mode === 'crop';
+    
+    // For non-crop modes (Resize, Convert, Rotate), we want the image to fit fully visible
+    // without auto-zooming to cover the container.
+    const objectFit = isCropMode ? 'contain' : 'contain'; 
+
     return (
         <ToolLayout title={title} icon={icon} file={file} onClear={() => { setFile(null); setImageSrc(null); }}>
             <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden flex flex-col lg:flex-row h-[80vh]">
@@ -154,26 +169,32 @@ const BaseEditor = ({ title, icon, mode }) => {
                              <img src={imageSrc} className="max-w-full max-h-full object-contain shadow-2xl" />
                         </div>
                     ) : (
-                        <Cropper
-                            image={imageSrc}
-                            crop={crop}
-                            zoom={zoom}
-                            rotation={rotation}
-                            aspect={aspect}
-                            onCropChange={setCrop}
-                            onCropComplete={onCropComplete}
-                            onZoomChange={setZoom}
-                            onRotationChange={setRotation}
-                            restrictPosition={false}
-                            style={{ containerStyle: { background: 'transparent' } }}
-                            transform={[
-                                `translate(${crop.x}px, ${crop.y}px)`,
-                                `rotateZ(${rotation}deg)`,
-                                `rotateY(${flip.horizontal ? 180 : 0}deg)`,
-                                `rotateX(${flip.vertical ? 180 : 0}deg)`,
-                                `scale(${zoom})`,
-                            ].join(' ')}
-                        />
+                        <div className="absolute inset-0 top-0 left-0 right-0 bottom-0">
+                            <Cropper
+                                image={imageSrc}
+                                crop={crop}
+                                zoom={zoom}
+                                rotation={rotation}
+                                aspect={aspect}
+                                onCropChange={setCrop}
+                                onCropComplete={onCropComplete}
+                                onZoomChange={setZoom}
+                                onRotationChange={setRotation}
+                                restrictPosition={false}
+                                objectFit="contain" 
+                                style={{ 
+                                    containerStyle: { background: 'transparent' },
+                                    mediaStyle: { width: 'auto', height: 'auto', maxHeight: '90%', maxWidth: '90%' } 
+                                }}
+                                transform={[
+                                    `translate(${crop.x}px, ${crop.y}px)`,
+                                    `rotateZ(${rotation}deg)`,
+                                    `rotateY(${flip.horizontal ? 180 : 0}deg)`,
+                                    `rotateX(${flip.vertical ? 180 : 0}deg)`,
+                                    `scale(${zoom})`,
+                                ].join(' ')}
+                            />
+                        </div>
                     )}
 
                     {/* Zoom Controls (only if using Cropper) */}
