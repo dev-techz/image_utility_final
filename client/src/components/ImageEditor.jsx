@@ -3,7 +3,7 @@ import Cropper from 'react-easy-crop';
 import { getCroppedImg } from '../utils/imageProcessor';
 import { Download, RotateCw, FlipHorizontal, FlipVertical, Image as ImageIcon, Maximize, FileDigit, Eraser } from 'lucide-react';
 import { saveAs } from 'file-saver';
-import imglyRemoveBackground from '@imgly/background-removal';
+import { removeBackground } from '@imgly/background-removal';
 
 const ImageEditor = ({ file }) => {
   const [imageSrc, setImageSrc] = useState(null);
@@ -68,7 +68,7 @@ const ImageEditor = ({ file }) => {
     try {
         // imgly operates on the blob/url directly
         const imageBlob = await fetch(imageSrc).then(r => r.blob());
-        const blob = await imglyRemoveBackground(imageBlob, {
+        const blob = await removeBackground(imageBlob, {
             progress: (key, current, total) => {
                 console.log(`Downloading ${key}: ${Math.round(current/total * 100)}%`);
             }
