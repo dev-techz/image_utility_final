@@ -116,13 +116,12 @@ const ToolLayout = ({ title, icon: Icon, children, file, onClear, mode }) => {
                             <ul className="space-y-4 text-sm">
                                 <li><a href="#features" className="hover:text-white hover:translate-x-1 transition-transform inline-block">Features</a></li>
                                 <li><a href="#faq" className="hover:text-white hover:translate-x-1 transition-transform inline-block">FAQ</a></li>
-                                <li><a href="https://github.com/greatstackdev/image-utility-app" target="_blank" rel="noopener noreferrer" className="hover:text-white hover:translate-x-1 transition-transform inline-block">GitHub Repository</a></li>
                             </ul>
                         </div>
                     </div>
 
                     <div className="border-t border-gray-800/60 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs">
-                        <p>&copy; {new Date().getFullYear()} PixEdit. Released under MIT License.</p>
+                        <p>&copy; {new Date().getFullYear()} PixEdit. Released under ISC License.</p>
                         <div className="flex gap-6">
                             <span className="cursor-pointer hover:text-white transition-colors">Privacy Policy</span>
                             <span className="cursor-pointer hover:text-white transition-colors">Terms of Service</span>
