@@ -6,17 +6,10 @@ const fs = require("fs");
 const path = require("path");
 
 const app = express();
-const upload = multer({ dest: "uploads/" });
+const upload = multer({ storage: multer.memoryStorage() });
 
 app.use(cors());
 app.use(express.json());
-
-// Helper to cleanup
-const cleanup = (filePath) => {
-    fs.unlink(filePath, (err) => {
-        if (err) console.error("Error deleting file:", err);
-    });
-};
 
 app.get("/", (req, res) => {
     res.send("PixEdit API v1.0 - Active");
@@ -50,9 +43,6 @@ app.post("/process", upload.single("image"), async (req, res) => {
     } catch (err) {
         console.error("Processing error:", err);
         res.status(500).json({ error: "Image processing failed" });
-    } finally {
-        // Always cleanup temp upload
-        cleanup(req.file.path);
     }
 });
 

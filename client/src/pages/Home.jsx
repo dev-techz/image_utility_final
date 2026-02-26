@@ -10,9 +10,14 @@ const Navbar = () => {
         <nav className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md border-b border-gray-200 z-50">
             <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
                 <Link to="/" className="text-xl font-extrabold text-gray-900 flex items-center gap-2">
-                    <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white">
-                        <Download size={18} />
-                    </div>
+                    <svg width="32" height="32" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M13.0964 20.3536L17.6262 22.4473L17.046 27.6527L8.94876 36.8282C4.2486 33.8023 0.898178 28.8615 0 23.108L13.0964 20.3536Z" fill="#15E3FF"></path>
+                        <path d="M25.183 25.94L31.2414 36.3789C27.992 38.6605 24.0331 40 19.7612 40C18.3744 40 17.0206 39.8587 15.7133 39.59L17.046 27.6527L20.4765 23.7656L25.183 25.94Z" fill="#348DFC"></path>
+                        <path d="M39.1022 14.881C39.5332 16.5143 39.763 18.2294 39.763 19.9982C39.763 24.1145 38.5192 27.9403 36.3874 31.1207L25.184 25.9405L22.5551 21.4123L25.8574 17.6692L39.1022 14.881Z" fill="#FD4873"></path>
+                        <path d="M17.046 27.6524L17.0458 27.6527L17.1686 26.552L17.046 27.6524Z" fill="#FFC700"></path>
+                        <path d="M20.132 0C26.1505 0.109415 31.5194 2.877 35.1148 7.17842L25.8561 17.6694L20.9792 18.6959L18.519 14.4574L20.132 0Z" fill="#FFC700"></path>
+                        <path d="M18.519 14.4574L17.9745 19.3269L13.0991 20.353L0.514709 14.5347C2.09964 8.94044 6.05794 4.3436 11.2327 1.9007L18.519 14.4574Z" fill="#00E7B9"></path>
+                    </svg>
                     PixEdit
                 </Link>
 
@@ -54,7 +59,7 @@ const Navbar = () => {
                     <a href="#faq" className="text-sm font-medium text-gray-600 hover:text-gray-900">
                         FAQ
                     </a>
-                    <a href="https://github.com/dev-techz/image-utility-app" target="_blank" className="text-sm font-medium text-gray-600 hover:text-gray-900">
+                    <a href="https://github.com/greatstackdev/image-utility-app" target="_blank" className="text-sm font-medium text-gray-600 hover:text-gray-900">
                         GitHub
                     </a>
                 </div>
@@ -168,7 +173,7 @@ const Home = () => {
                         <Link to="/compress" className="bg-gray-900 text-white px-8 py-4 rounded-xl font-bold hover:bg-gray-800 transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center justify-center gap-2">
                             Start Editing Now <ChevronRight size={18} />
                         </Link>
-                        <a href="https://github.com/dev-techz/image-utility-app" target="_blank" className="bg-white text-gray-700 border border-gray-200 px-8 py-4 rounded-xl font-bold hover:bg-gray-50 hover:border-gray-300 transition-all flex items-center justify-center gap-2">
+                        <a href="https://github.com/greatstackdev/image-utility-app" target="_blank" className="bg-white text-gray-700 border border-gray-200 px-8 py-4 rounded-xl font-bold hover:bg-gray-50 hover:border-gray-300 transition-all flex items-center justify-center gap-2">
                             View Source
                         </a>
                     </div>
@@ -263,7 +268,7 @@ const Home = () => {
                         <Link to="/resize" className="hover:text-white transition-colors">
                             Resize
                         </Link>
-                        <a href="https://github.com/dev-techz/image-utility-app" target="_blank" className="hover:text-white transition-colors">
+                        <a href="https://github.com/greatstackdev/image-utility-app" target="_blank" className="hover:text-white transition-colors">
                             GitHub
                         </a>
                     </div>
