@@ -5,29 +5,134 @@ import Cropper from "react-easy-crop";
 import { getCroppedImg } from "../utils/imageProcessor";
 import { removeBackground } from "@imgly/background-removal";
 import { saveAs } from "file-saver";
-import { Download, RotateCw, FlipHorizontal, FlipVertical, Maximize, FileDigit, Eraser, ArrowLeft, RefreshCw, Image as ImageIcon } from "lucide-react";
+import { Download, RotateCw, FlipHorizontal, FlipVertical, Maximize, FileDigit, Eraser, ArrowLeft, RefreshCw, Image as ImageIcon, ChevronRight } from "lucide-react";
 
-const ToolLayout = ({ title, icon: Icon, children, file, onClear }) => (
-    <div className="min-h-screen bg-gray-50 flex flex-col font-sans">
-        <header className="bg-white border-b border-gray-200 py-4 px-6 flex justify-between items-center shadow-sm sticky top-0 z-50">
-            <div className="flex items-center gap-4">
-                <Link to="/" className="text-gray-500 hover:text-gray-800 transition-colors p-2 hover:bg-gray-100 rounded-lg">
-                    <ArrowLeft className="w-5 h-5" />
-                </Link>
-                <h1 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-                    {Icon && <Icon className="w-6 h-6 text-blue-500" />}
-                    {title}
-                </h1>
-            </div>
-            {file && (
-                <button onClick={onClear} className="text-sm font-medium text-gray-500 hover:text-red-600 flex items-center gap-1.5 px-3 py-1.5 hover:bg-red-50 rounded-lg transition-colors">
-                    <RefreshCw className="w-4 h-4" /> New Image
-                </button>
-            )}
-        </header>
-        <main className="flex-1 p-4 lg:p-6 max-w-[1600px] mx-auto w-full">{children}</main>
-    </div>
+export const ALL_TOOLS = [
+    { to: "/compress", icon: Download, color: "bg-green-500", title: "Compress Image", desc: "Reduce file size significantly while maintaining visual quality.", mode: "compress" },
+    { to: "/resize", icon: FileDigit, color: "bg-blue-500", title: "Resize Image", desc: "Change dimensions by pixels or percentage.", mode: "resize" },
+    { to: "/crop", icon: Maximize, color: "bg-purple-500", title: "Crop Image", desc: "Trim unwanted areas with precision.", mode: "crop" },
+    { to: "/convert", icon: RefreshCw, color: "bg-orange-500", title: "Convert Format", desc: "Switch seamlessly between JPG, PNG, WEBP, and GIF formats.", mode: "convert" },
+    { to: "/rotate", icon: RotateCw, color: "bg-pink-500", title: "Rotate & Flip", desc: "Fix orientation issues instantly.", mode: "rotate" },
+    { to: "/remove-bg", icon: Eraser, color: "bg-indigo-500", title: "Remove Background", desc: "Use AI to automatically detect and remove backgrounds.", mode: "remove-bg" },
+];
+
+const ToolCard = ({ to, icon: Icon, title, desc, color }) => (
+    <Link to={to} className="group relative block p-6 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-all hover:-translate-y-1">
+        <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${color} text-white transition-transform group-hover:scale-110`}>
+            <Icon className="w-6 h-6" />
+        </div>
+        <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors">{title}</h3>
+        <p className="text-sm text-gray-500 mt-2 line-clamp-2 leading-relaxed">{desc}</p>
+        <div className="mt-4 flex items-center text-xs font-semibold text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">
+            Launch Tool <ChevronRight size={14} className="ml-1" />
+        </div>
+    </Link>
 );
+
+const ToolLayout = ({ title, icon: Icon, children, file, onClear, mode }) => {
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
+
+    return (
+        <div className="min-h-screen bg-gray-50 flex flex-col font-sans">
+            <header className="bg-white border-b border-gray-200 py-4 px-6 flex justify-between items-center shadow-sm sticky top-0 z-50">
+                <div className="flex items-center gap-4">
+                    <Link to="/" className="text-gray-500 hover:text-gray-800 transition-colors p-2 hover:bg-gray-100 rounded-lg">
+                        <ArrowLeft className="w-5 h-5" />
+                    </Link>
+                    <h1 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+                        {Icon && <Icon className="w-6 h-6 text-blue-500" />}
+                        {title}
+                    </h1>
+                </div>
+                {file && (
+                    <button onClick={onClear} className="text-sm font-medium text-gray-500 hover:text-red-600 flex items-center gap-1.5 px-3 py-1.5 hover:bg-red-50 rounded-lg transition-colors">
+                        <RefreshCw className="w-4 h-4" /> New Image
+                    </button>
+                )}
+            </header>
+            <main className="flex-1 p-4 lg:p-6 max-w-[1600px] mx-auto w-full">
+                {children}
+            </main>
+            {/* More Tools Section */}
+            <section className="mt-16 py-12 pb-20 bg-white px-6 lg:px-12 max-w-[1600px] mx-auto w-full border-t border-gray-200">
+                <div className="mb-8">
+                    <h2 className="text-2xl font-bold text-gray-900 mb-2">More Tools</h2>
+                    <p className="text-gray-500 text-sm">Explore other image manipulation tools we offer.</p>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+                    {ALL_TOOLS.filter((tool) => tool.mode !== mode).map((tool) => (
+                        <ToolCard key={tool.mode} {...tool} />
+                    ))}
+                </div>
+            </section>
+            <footer className="bg-gray-950 text-gray-400 pt-20 pb-10 px-6 border-t border-gray-900 relative overflow-hidden">
+                {/* Decorative Background Elements */}
+                <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-900/10 rounded-full blur-3xl -z-10 pointer-events-none"></div>
+                <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-900/10 rounded-full blur-3xl -z-10 pointer-events-none"></div>
+
+                <div className="max-w-7xl mx-auto">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+                        <div className="lg:col-span-1">
+                            <a href="#top" className="text-2xl font-extrabold text-white flex items-center gap-2 mb-6">
+                                <svg width="28" height="28" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M13.0964 20.3536L17.6262 22.4473L17.046 27.6527L8.94876 36.8282C4.2486 33.8023 0.898178 28.8615 0 23.108L13.0964 20.3536Z" fill="#15E3FF"></path>
+                                    <path d="M25.183 25.94L31.2414 36.3789C27.992 38.6605 24.0331 40 19.7612 40C18.3744 40 17.0206 39.8587 15.7133 39.59L17.046 27.6527L20.4765 23.7656L25.183 25.94Z" fill="#348DFC"></path>
+                                    <path d="M39.1022 14.881C39.5332 16.5143 39.763 18.2294 39.763 19.9982C39.763 24.1145 38.5192 27.9403 36.3874 31.1207L25.184 25.9405L22.5551 21.4123L25.8574 17.6692L39.1022 14.881Z" fill="#FD4873"></path>
+                                    <path d="M17.046 27.6524L17.0458 27.6527L17.1686 26.552L17.046 27.6524Z" fill="#FFC700"></path>
+                                    <path d="M20.132 0C26.1505 0.109415 31.5194 2.877 35.1148 7.17842L25.8561 17.6694L20.9792 18.6959L18.519 14.4574L20.132 0Z" fill="#FFC700"></path>
+                                    <path d="M18.519 14.4574L17.9745 19.3269L13.0991 20.353L0.514709 14.5347C2.09964 8.94044 6.05794 4.3436 11.2327 1.9007L18.519 14.4574Z" fill="#00E7B9"></path>
+                                </svg>
+                                PixEdit
+                            </a>
+                            <p className="text-sm leading-relaxed mb-6">
+                                Professional-grade image editing tools right in your browser. Fast, secure, and completely free.
+                            </p>
+                        </div>
+
+                        <div>
+                            <h4 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">Products</h4>
+                            <ul className="space-y-4 text-sm">
+                                <li><Link to="/compress" className="hover:text-white hover:translate-x-1 transition-transform inline-block">Compress Image</Link></li>
+                                <li><Link to="/resize" className="hover:text-white hover:translate-x-1 transition-transform inline-block">Resize Image</Link></li>
+                                <li><Link to="/crop" className="hover:text-white hover:translate-x-1 transition-transform inline-block">Crop Image</Link></li>
+                                <li><Link to="/convert" className="hover:text-white hover:translate-x-1 transition-transform inline-block">Convert Format</Link></li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h4 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">More Tools</h4>
+                            <ul className="space-y-4 text-sm">
+                                <li><Link to="/rotate" className="hover:text-white hover:translate-x-1 transition-transform inline-block">Rotate & Flip</Link></li>
+                                <li><Link to="/remove-bg" className="hover:text-white hover:translate-x-1 transition-transform inline-block">Remove Background</Link></li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h4 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">Resources</h4>
+                            <ul className="space-y-4 text-sm">
+                                <li><a href="#features" className="hover:text-white hover:translate-x-1 transition-transform inline-block">Features</a></li>
+                                <li><a href="#faq" className="hover:text-white hover:translate-x-1 transition-transform inline-block">FAQ</a></li>
+                                <li><a href="https://github.com/greatstackdev/image-utility-app" target="_blank" rel="noopener noreferrer" className="hover:text-white hover:translate-x-1 transition-transform inline-block">GitHub Repository</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div className="border-t border-gray-800/60 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs">
+                        <p>&copy; {new Date().getFullYear()} PixEdit. Released under MIT License.</p>
+                        <div className="flex gap-6">
+                            <span className="cursor-pointer hover:text-white transition-colors">Privacy Policy</span>
+                            <span className="cursor-pointer hover:text-white transition-colors">Terms of Service</span>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    )
+};
 
 // Helper component to handle async BG removal effect
 const BgRemoverLogic = ({ imageSrc, onProcessed }) => {
@@ -144,8 +249,8 @@ const BaseEditor = ({ title, icon, mode }) => {
 
     if (!file) {
         return (
-            <ToolLayout title={title} icon={icon}>
-                <div className="mt-10 max-w-xl mx-auto">
+            <ToolLayout title={title} icon={icon} mode={mode}>
+                <div className="mt-10 mb-16 max-w-xl mx-auto">
                     <DropZone onUpload={setFile} />
                 </div>
             </ToolLayout>
@@ -157,12 +262,13 @@ const BaseEditor = ({ title, icon, mode }) => {
             title={title}
             icon={icon}
             file={file}
+            mode={mode}
             onClear={() => {
                 setFile(null);
                 setImageSrc(null);
             }}
         >
-            <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden flex flex-col lg:flex-row h-[80vh]">
+            <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden flex flex-col lg:flex-row h-[80vh] mb-12">
                 {/* Main Canvas Area */}
                 <div className="relative flex-1 bg-gray-900 h-full min-h-[400px] flex items-center justify-center overflow-hidden">
                     {/* Checkered bg for transparency */}
