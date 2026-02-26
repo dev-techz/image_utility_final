@@ -120,16 +120,6 @@ const ToolCard = ({ to, icon: Icon, title, desc, color }) => (
     </Link>
 );
 
-const Feature = ({ icon: Icon, title, desc }) => (
-    <div className="flex flex-col items-center text-center p-6">
-        <div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mb-4">
-            <Icon size={28} />
-        </div>
-        <h3 className="text-lg font-bold text-gray-900 mb-2">{title}</h3>
-        <p className="text-gray-500 leading-relaxed text-sm">{desc}</p>
-    </div>
-);
-
 const Step = ({ number, title, desc }) => (
     <div className="relative flex flex-col items-center text-center max-w-xs mx-auto">
         <div className="w-10 h-10 bg-gray-900 text-white rounded-full flex items-center justify-center font-bold text-lg mb-4 shadow-lg z-10">{number}</div>
